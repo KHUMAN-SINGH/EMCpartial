@@ -1,39 +1,15 @@
 public with sharing class UpdateNotesAndTagsInMlog {
     @InvocableMethod(label='Change Tags & notes ' description='Change Tags and notes on Mlog if tags and notes in salesforce are changed' category='Employee_Mileage__c')
-    //field value are tag,note,both
-    public static void changedActivityStatus(List<updatedetails> requestList){
-        system.debug('requestList >> ' + requestList);
-        System.debug('ids: '+requestList[0].Ids);
-        System.debug('fields: '+requestList[0].Field);
+    public static void changedNotesAndTags(List<String> ids){
+        System.debug('ids: '+ ids);
         System.debug('Call Method from Flow');
 
-        for(Employee_Mileage__c mileages : [Select Id,Name,Trip_Id__c,Tag__c,Notes__c,Bi_Weekly_Reimbursement__r.Contact__r.Driving_States__c,Bi_Weekly_Reimbursement__r.Contact__c from Employee_Mileage__c where Id In: requestList[0].Ids]){
-            // Employee_Mileage__c mileages = [Select Id,Name,Trip_Id__c,Trip_Origin_State__c, Trip_Destination_State__c, Bi_Weekly_Reimbursement__r.Contact__r.Driving_States__c,Bi_Weekly_Reimbursement__r.Contact__c from Employee_Mileage__c where Id =: ids[0]];
+        for(Employee_Mileage__c mileages : [Select Id,Name,Trip_Id__c,Tag__c,Notes__c,Bi_Weekly_Reimbursement__r.Contact__r.Driving_States__c,Bi_Weekly_Reimbursement__r.Contact__c from Employee_Mileage__c where Id In: ids]){
             System.debug('inside the for loop ');
             System.debug('Trip_Id__c '+mileages.Trip_Id__c);
             System.debug('Bi_Weekly_Reimbursement__r.Contact__c '+mileages.Bi_Weekly_Reimbursement__r.Contact__c);
-            System.debug('requestList[0].Field  '+requestList[0].Field);
-            if(mileages.Trip_Id__c != null && mileages.Bi_Weekly_Reimbursement__r.Contact__c != null && requestList[0].Field == 'tag'){
-                JSONGenerator gen = JSON.createGenerator(true);
-                gen.writeStartObject();
-                gen.writeStringField('tags',mileages.Tag__c);
-                gen.writeEndObject();
-                System.debug('JSON object: '+ gen.getAsString());
 
-                putHTTPUpdateTriplogTagsNotes(String.valueOf(mileages.Trip_Id__c),mileages.Bi_Weekly_Reimbursement__r.Contact__c,gen.getAsString());
-
-                }
-            else if(mileages.Trip_Id__c != null && mileages.Bi_Weekly_Reimbursement__r.Contact__c != null && requestList[0].Field == 'notes'){
-                JSONGenerator gen = JSON.createGenerator(true);
-                gen.writeStartObject();
-                gen.writeStringField('notes',mileages.Notes__c);
-                gen.writeEndObject();
-                System.debug('JSON object: '+ gen.getAsString());
-
-                putHTTPUpdateTriplogTagsNotes(String.valueOf(mileages.Trip_Id__c),mileages.Bi_Weekly_Reimbursement__r.Contact__c,gen.getAsString());
-
-                }
-            else if(mileages.Trip_Id__c != null && mileages.Bi_Weekly_Reimbursement__r.Contact__c != null && requestList[0].Field == 'both'){
+            if(mileages.Trip_Id__c != null && mileages.Bi_Weekly_Reimbursement__r.Contact__c != null){
                 JSONGenerator gen = JSON.createGenerator(true);
                 gen.writeStartObject();
                 gen.writeStringField('tags',mileages.Tag__c);
@@ -41,10 +17,10 @@ public with sharing class UpdateNotesAndTagsInMlog {
                 gen.writeEndObject();
                 System.debug('JSON object: '+ gen.getAsString());
                 putHTTPUpdateTriplogTagsNotes(String.valueOf(mileages.Trip_Id__c),mileages.Bi_Weekly_Reimbursement__r.Contact__c,gen.getAsString());
-                }
+            }
             else{
                 System.debug('Trip id is null or Related Contact not available so not able to callout to update in mlog');
-                }
+            }
         }
     }
 
@@ -77,13 +53,5 @@ public with sharing class UpdateNotesAndTagsInMlog {
                 }
             }
         }
-    }
-
-    public class updatedetails{
-        @InvocableVariable(required=true)
-        public list<Id> Ids;
-
-        @InvocableVariable(required=true)
-        public string Field;
     }
 }

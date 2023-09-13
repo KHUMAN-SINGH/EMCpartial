@@ -1,11 +1,10 @@
 @isTest
-public class UpdateActivityStatusInMlogTest {
+public with sharing class UpdateNotesAndTagsInMlogTest {
     @isTest
     public static void updateActivityStatusTest(){
         TriggerConfig__c customEmailSetting = TestDataFactory.triggerConfigCustomSetting(true);
         TrueDialog_Keys__c trueDialogCustom = TestDataFactory.createTrueDialog(true);
         Vehicle_URL_Mapping__c veh = TestDataFactory.createVehicleData(true,0);
-
         IRS_Mileage_Rate__c irsRate = TestDataFactory.createIRSRate(true,2023);
 
         Gas_Prices__c gasprice = new Gas_Prices__c();
@@ -19,7 +18,6 @@ public class UpdateActivityStatusInMlogTest {
         Profile profileObj = TestDataFactory.getUserProfile();
         User admin = TestDataFactory.getSystemAdminUser(uRole.Id);
         User userObj;
-
         Account acc;
         Contact con1 = new Contact();
 
@@ -45,7 +43,6 @@ public class UpdateActivityStatusInMlogTest {
             con1.Driving_States__c = 'TX';
             con1.Employee_ID__c = '234343456';
             con1.Triplog_UserID__c = '20001884';
-            
             insert con1;
         }
 
@@ -93,10 +90,10 @@ public class UpdateActivityStatusInMlogTest {
             empMileage.Trip_Id__c  = 143576 ;
             empMileage.StartTime__c = System.today()-1;
             empMileage.EndTime__c = System.today();
+            empMileage.Notes__c='new note added';
             insert empMileage;
+            List<String> mileId = new List<String>{empMileage.Id};
+            UpdateNotesAndTagsInMlog.changedNotesAndTags(mileId);
 
-        List<String> mileId = new List<String>{empMileage.Id};
-        UpdateActivityStatusInMlog.changedActivityStatus(mileId);
-        UpdateActivityStatusInMlog.putHTTPUpdateTriplogActivity(String.valueOf(empMileage.Trip_Id__c),con1.Id);
     }
 }
