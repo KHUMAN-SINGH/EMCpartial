@@ -6,7 +6,7 @@ public with sharing class UpdateNotesAndTagsInMlog {
         System.debug('ids: '+requestList[0].Ids);
         System.debug('fields: '+requestList[0].Field);
         System.debug('Call Method from Flow');
-        
+
         for(Employee_Mileage__c mileages : [Select Id,Name,Trip_Id__c,Tag__c,Notes__c,Bi_Weekly_Reimbursement__r.Contact__r.Driving_States__c,Bi_Weekly_Reimbursement__r.Contact__c from Employee_Mileage__c where Id In: requestList[0].Ids]){
             // Employee_Mileage__c mileages = [Select Id,Name,Trip_Id__c,Trip_Origin_State__c, Trip_Destination_State__c, Bi_Weekly_Reimbursement__r.Contact__r.Driving_States__c,Bi_Weekly_Reimbursement__r.Contact__c from Employee_Mileage__c where Id =: ids[0]];
             System.debug('inside the for loop ');
@@ -41,12 +41,11 @@ public with sharing class UpdateNotesAndTagsInMlog {
                 gen.writeEndObject();
                 System.debug('JSON object: '+ gen.getAsString());
                 putHTTPUpdateTriplogTagsNotes(String.valueOf(mileages.Trip_Id__c),mileages.Bi_Weekly_Reimbursement__r.Contact__c,gen.getAsString());
-                } 
+                }
             else{
                 System.debug('Trip id is null or Related Contact not available so not able to callout to update in mlog');
                 }
         }
-        
     }
 
     @Future(callout = true)
@@ -57,16 +56,15 @@ public with sharing class UpdateNotesAndTagsInMlog {
         Http h;
         HttpRequest req;
         HttpResponse res;
-        String mLOGACCOUNT = System.Label.Triplog_New_URL + ',' + System.Label.Triplog_New_URL2; 
+        String mLOGACCOUNT = System.Label.Triplog_New_URL + ',' + System.Label.Triplog_New_URL2;
         for(Contact conObj : [SELECT id,Triplog_UserID__c,Email, Account.Triplog_API__c  FROM Contact WHERE id =: conId]) {
-            
             if(conObj.Triplog_UserID__c != null && conObj.Account.Triplog_API__c != null ){
                 String baseURL = !mLOGACCOUNT.Contains( conObj.Account.Triplog_API__c ) ? StaticValues.TRIPLOG_BASEURL : StaticValues.MLOG_BASEURL;
                 h = new Http();
                 req = new HttpRequest();
                 req.setEndpoint( baseURL + '/api/trips/' + tripId);
                 String st=baseURL + '/api/trips/' + tripId;
-                system.debug('st--->>'+st); 
+                system.debug('st--->>'+st);
                 req.setMethod('PUT');
                 req.setTimeout(120000);
                 req.setbody(Json);
@@ -74,8 +72,8 @@ public with sharing class UpdateNotesAndTagsInMlog {
                 req.setHeader('Authorization', 'apikey '+ conObj.Account.Triplog_API__c);
                 if(!Test.isRunningTest())
                 {
-                    res = h.send(req);  
-                    system.debug('response--->>> '+res.getbody());          
+                    res = h.send(req);
+                    system.debug('response--->>> '+res.getbody());
                 }
             }
         }
@@ -84,8 +82,8 @@ public with sharing class UpdateNotesAndTagsInMlog {
     public class updatedetails{
         @InvocableVariable(required=true)
         public list<Id> Ids;
-        
+
         @InvocableVariable(required=true)
         public string Field;
-    }   
+    }
 }

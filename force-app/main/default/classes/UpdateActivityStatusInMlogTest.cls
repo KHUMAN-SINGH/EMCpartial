@@ -74,7 +74,7 @@ public class UpdateActivityStatusInMlogTest {
 
         Employee_Mileage__c empMileage = new Employee_Mileage__c();
             empMileage.Name = 'Test Mileage ';
-            empMileage.Contact_Email_Id__c = 'parasdhanani@gmail.com';  
+            empMileage.Contact_Email_Id__c = 'parasdhanani@gmail.com';
             empMileage.EmployeeReimbursement__c = er.Id;
             empMileage.Trip_Date__c = system.today();
             empMileage.Bi_Weekly_Reimbursement__c = biReim.Id;
@@ -84,11 +84,11 @@ public class UpdateActivityStatusInMlogTest {
             empMileage.Day_Of_Week__c = 'Tuesday';
             empMileage.MPG__c =  24.30;
             empMileage.TimeZone__c = 'US/Mountain' ;
-            empMileage.Origin_Name__c = 'Test Origin ' ;                           
+            empMileage.Origin_Name__c = 'Test Origin ' ;
             empMileage.Trip_Destination__c = 'Test Destination ';
-            // empMileage.Trip_Status__c = StaticValues.noApprovedYet; 
+            // empMileage.Trip_Status__c = StaticValues.noApprovedYet;
             empMileage.Approved_Date__c = null;
-            empMileage.Tag__c = 'Admin';   
+            empMileage.Tag__c = 'Admin';
             empMileage.Rejected__c = false;
             empMileage.Trip_Id__c  = 143576 ;
             empMileage.StartTime__c = System.today()-1;
